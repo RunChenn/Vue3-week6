@@ -2,163 +2,37 @@
 import { ref, onMounted } from 'vue';
 import api from '../api/index.js';
 
-import ProdModal from '../components/ProdModal.vue';
 import DelModal from '../components/DelModal.vue';
-import Pagination from '../components/Pagination.vue';
+// import Pagination from '../components/Pagination.vue';
+
+import ProdsTable from '../components/ProdsTable.vue';
+import Carts from '../components/Carts.vue';
+import Form from '../components/Form.vue';
+import ProdModal from '../components/ProdModal.vue';
 
 export default {
-  components: { ProdModal, DelModal, Pagination },
+  components: { ProdModal, DelModal, ProdsTable, Carts, Form, ProdModal },
   setup() {
-    let products = ref([]);
-
-    let prodInfo = ref({});
-
-    let isEnabled = ref(false);
-
-    let isNew = ref(false);
-
-    let tempProduct = ref({ imagesUrl: [], id: '' });
-
-    let pagination = ref({});
-
-    const prodsDetail = (item) => {
-      prodInfo.value = item;
-    };
-
-    // 載入所有商品
-    const getData = async (page = 1) => {
-      try {
-        const prodsData = await api.products.getProducts(page);
-
-        products.value = prodsData.products;
-        pagination.value = prodsData.pagination;
-      } catch (err) {
-        alert(err.message);
-      }
-    };
-
-    onMounted(async () => {
-      try {
-        // 檢查權限
-        await api.auth.checkAuth();
-        getData();
-      } catch (err) {
-        alert(err.message);
-      }
-    });
-
-    const openModal = (status, item) => {
-      isNew.value = status === 'new' ? true : false;
-
-      tempProduct.value =
-        status === 'new'
-          ? {
-              imagesUrl: [],
-            }
-          : { ...item };
-    };
-
-    // 新增圖片
-    const createImages = () => {
-      tempProduct.value.imagesUrl = [];
-      tempProduct.value.imagesUrl.push('');
-    };
-
-    return {
-      products,
-      isEnabled,
-      prodsDetail,
-      prodInfo,
-      tempProduct,
-      isNew,
-      openModal,
-      createImages,
-      getData,
-      pagination,
-    };
+    return {};
   },
 };
 </script>
 
 <template>
-  <div>
-    <div class="container">
-      <div class="row py-1">
-        <div class="text-end mb-3">
-          <button
-            type="button"
-            class="btn btn-success"
-            @click="openModal('new')"
-            data-bs-toggle="modal"
-            data-bs-target="#productModal"
-          >
-            建立新的產品
-          </button>
-        </div>
-        <div class="col-12 col-sm-12">
-          <h3>產品列表</h3>
-          <hr />
-          <table class="table table-hover">
-            <thead>
-              <tr>
-                <th scope="col">分類</th>
-                <th scope="col" class="text-start">產品名稱</th>
-                <th scope="col">原價</th>
-                <th scope="col">售價</th>
-                <th scope="col">是否啟用</th>
-                <th scope="col">操作</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="item in products" :key="item.id">
-                <td>{{ item.category }}</td>
-                <td class="text-start">{{ item.title }}</td>
-                <td>{{ item.origin_price }}</td>
-                <td>{{ item.price }}</td>
-                <td>
-                  <span v-if="item.is_enabled" class="text-success">啟用</span>
-                  <span v-else>未啟用</span>
-                </td>
-                <td>
-                  <button
-                    type="button"
-                    class="btn btn-outline-primary btn-sm me-2 mb-md-1"
-                    data-bs-target="#productModal"
-                    data-bs-toggle="modal"
-                    @click="openModal('edit', item)"
-                  >
-                    編輯
-                  </button>
-                  <button
-                    type="button"
-                    class="btn btn-outline-danger btn-sm me-2 mb-md-1"
-                    data-bs-target="#delProductModal"
-                    data-bs-toggle="modal"
-                    @click="openModal('delete', item)"
-                  >
-                    刪除
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+  <div class="container">
+    <div class="mt-4">
+      <!-- 產品列表 -->
+      <ProdsTable />
 
-          <Pagination v-model:pages="pagination" @update-pages="getData" />
-        </div>
-      </div>
+      <!-- 購物車列表 -->
+      <!-- <Carts /> -->
+    </div>
+    <div class="my-5 row justify-content-center">
+      <!-- 表單 -->
+      <!-- <Form /> -->
     </div>
     <!-- Modal -->
-    <ProdModal
-      v-model:temp-product="tempProduct"
-      v-model:is-new="isNew"
-      @update="getData"
-    />
-    <!-- delModal -->
-    <DelModal
-      v-model:id="tempProduct.id"
-      v-model:product-title="tempProduct.title"
-      @update="getData"
-    />
+    <!-- <ProdModal /> -->
   </div>
 </template>
 
