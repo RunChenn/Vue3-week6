@@ -12,7 +12,11 @@ export default {
     // },
   },
   setup(props, { emit }) {
-    return {};
+    const cart = ref({});
+
+    return {
+      cart,
+    };
   },
 };
 </script>

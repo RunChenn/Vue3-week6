@@ -2,7 +2,6 @@
 import { ref, onMounted } from 'vue';
 import api from '../api/index.js';
 
-import DelModal from '../components/DelModal.vue';
 // import Pagination from '../components/Pagination.vue';
 
 import ProdsTable from '../components/ProdsTable.vue';
@@ -11,7 +10,7 @@ import Form from '../components/Form.vue';
 import ProdModal from '../components/ProdModal.vue';
 
 export default {
-  components: { ProdModal, DelModal, ProdsTable, Carts, Form, ProdModal },
+  components: { ProdModal, ProdsTable, Carts, Form, ProdModal },
   setup() {
     return {};
   },
@@ -25,7 +24,7 @@ export default {
       <ProdsTable />
 
       <!-- 購物車列表 -->
-      <!-- <Carts /> -->
+      <Carts />
     </div>
     <div class="my-5 row justify-content-center">
       <!-- 表單 -->

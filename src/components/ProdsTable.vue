@@ -1,24 +1,26 @@
 <script>
-import { ref, onMounted } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import api from '../api/index.js';
 
 import ProdModal from '../components/ProdModal.vue';
-import DelModal from '../components/DelModal.vue';
 // import Pagination from '../components/Pagination.vue';
 
 export default {
   // components: { ProdModal, DelModal, Pagination },
-  components: { ProdModal, DelModal },
+  components: { ProdModal },
   setup() {
     let products = ref([]);
+    let product = ref({});
 
     let prodInfo = ref({});
-
-    let isEnabled = ref(false);
 
     let isNew = ref(false);
 
     let tempProduct = ref({ imagesUrl: [], id: '' });
+
+    const loadingStatus = reactive({
+      loadingItem: '',
+    });
 
     // let pagination = ref({});
 
@@ -27,11 +29,31 @@ export default {
     };
 
     // 載入所有商品
-    const getData = async (page = 1) => {
+    const getProducts = async () => {
       try {
-        const prodsData = await api.products.getProducts(page);
+        const prodsData = await api.products.getProductsAll();
 
         products.value = prodsData.products;
+
+        console.log(products.value);
+        // pagination.value = prodsData.pagination;
+      } catch (err) {
+        alert(err.message);
+      }
+    };
+
+    // 載入單一商品
+    const getProduct = async (id) => {
+      loadingStatus.loadingItem = id;
+
+      try {
+        const prodsData = await api.products.getProduct(id);
+
+        loadingStatus.loadingItem = '';
+
+        product.value = prodsData.product;
+
+        console.log(product.value);
         // pagination.value = prodsData.pagination;
       } catch (err) {
         alert(err.message);
@@ -42,21 +64,14 @@ export default {
       try {
         // 檢查權限
         await api.auth.checkAuth();
-        getData();
+        getProducts();
       } catch (err) {
         alert(err.message);
       }
     });
 
-    const openModal = (status, item) => {
-      isNew.value = status === 'new' ? true : false;
-
-      tempProduct.value =
-        status === 'new'
-          ? {
-              imagesUrl: [],
-            }
-          : { ...item };
+    const openModal = (id) => {
+      getProduct(id);
     };
 
     // 新增圖片
@@ -67,14 +82,16 @@ export default {
 
     return {
       products,
-      isEnabled,
+      product,
+      loadingStatus,
+
       prodsDetail,
       prodInfo,
       tempProduct,
       isNew,
       openModal,
       createImages,
-      getData,
+      getProducts,
     };
   },
 };
@@ -147,66 +164,75 @@ export default {
                   class="btn btn-outline-primary btn-sm me-2 mb-md-1"
                   data-bs-target="#productModal"
                   data-bs-toggle="modal"
-                  @click="openModal('edit', item)"
+                  @click="openModal(item.id)"
+                  :disabled="
+                    loadingStatus.loadingItem === item.id || !item.is_enabled
+                  "
                 >
-                  編輯
+                  <i
+                    class="fas fa-spinner fa-pulse"
+                    v-if="loadingStatus.loadingItem === item.id"
+                  ></i>
+                  查看更多
                 </button>
                 <button
                   type="button"
                   class="btn btn-outline-danger btn-sm me-2 mb-md-1"
                   data-bs-target="#delProductModal"
                   data-bs-toggle="modal"
-                  @click="openModal('delete', item)"
+                  @click="addToCart(item.id)"
+                  :disabled="
+                    loadingStatus.loadingItem === item.id || !item.is_enabled
+                  "
                 >
-                  刪除
+                  <i
+                    class="fas fa-spinner fa-pulse"
+                    v-if="loadingStatus.loadingItem === item.id"
+                  ></i>
+                  加到購物車
                 </button>
               </td>
             </tr>
           </tbody>
         </table>
 
-        <!-- <Pagination v-model:pages="pagination" @update-pages="getData" /> -->
+        <!-- <Pagination v-model:pages="pagination" @update-pages="getProducts" /> -->
       </div>
     </div>
     <!-- Modal -->
-    <ProdModal
-      v-model:temp-product="tempProduct"
-      v-model:is-new="isNew"
-      @update="getData"
-    />
-    <!-- delModal -->
-    <DelModal
-      v-model:id="tempProduct.id"
-      v-model:product-title="tempProduct.title"
-      @update="getData"
-    />
+    <ProdModal v-model:product="product" @update="getProducts" />
   </div>
 </template>
 
 <style lang="scss" scoped>
-.prodsTable table {
-  vertical-align: middle;
-  max-height: 300px;
-}
-img {
-  max-width: 100%;
+.prodsTable {
+  height: 340px;
+  max-height: 340px;
+  overflow: auto;
+  table {
+    vertical-align: middle;
+    max-height: 300px;
+  }
+  img {
+    max-width: 100%;
 
-  object-fit: contain;
-}
+    object-fit: contain;
+  }
 
-.primary-image {
-  height: 300px;
-}
+  .primary-image {
+    height: 300px;
+  }
 
-.form-check-label span.checked {
-  color: #198754;
-}
+  .form-check-label span.checked {
+    color: #198754;
+  }
 
-.images {
-  height: 150px;
-}
-.form-check-input:checked {
-  border-color: #198754;
-  background-color: #198754;
+  .images {
+    height: 150px;
+  }
+  .form-check-input:checked {
+    border-color: #198754;
+    background-color: #198754;
+  }
 }
 </style>

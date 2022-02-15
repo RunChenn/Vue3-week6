@@ -6,13 +6,25 @@ import { Modal } from 'bootstrap';
 
 export default {
   props: {
-    isNew: {
-      type: Boolean,
-      default: false,
+    product: {
+      type: Object,
+      default: () => ({
+        imagesUrl: {
+          type: Array,
+          default: () => [],
+        },
+        id: {
+          type: String,
+          default: '',
+        },
+      }),
     },
   },
   setup(props, { emit }) {
-    return {};
+    const qty = ref(0);
+    return {
+      qty,
+    };
   },
 };
 </script>
@@ -31,7 +43,7 @@ export default {
       <div class="modal-content border-0">
         <div class="modal-header bg-dark text-white">
           <h5 class="modal-title" id="exampleModalLabel">
-            <span>{{}}</span>
+            <span>{{ product.title }}</span>
           </h5>
           <button
             type="button"
@@ -43,19 +55,36 @@ export default {
         <div class="modal-body">
           <div class="row">
             <div class="col-sm-6">
-              <img class="img-fluid" alt="" />
+              <img class="img-fluid" :src="product.imagesUrl" alt="" />
             </div>
             <div class="col-sm-6">
-              <span class="badge bg-primary rounded-pill">{{}}</span>
-              <p>商品描述：{{}}</p>
-              <p>商品內容：{{}}</p>
-              <div class="h5">{{}} 元</div>
-              <div class="h6">原價 {{}} 元</div>
-              <div class="h5">現在只要 {{}} 元</div>
+              <span class="badge bg-primary rounded-pill">{{
+                product.category
+              }}</span>
+              <p>商品描述：{{ product.description }}</p>
+              <p>商品內容：{{ product.content }}</p>
+              <div class="h5" v-if="!product.price">
+                {{ product.origin_price }} 元
+              </div>
+              <del class="h6" v-if="product.price"
+                >原價 {{ product.origin_price }} 元</del
+              >
+              <div class="h5" v-if="product.price">
+                現在只要 {{ product.price }} 元
+              </div>
               <div>
                 <div class="input-group">
-                  <input type="number" class="form-control" min="1" />
-                  <button type="button" class="btn btn-primary">
+                  <input
+                    type="number"
+                    class="form-control"
+                    v-model.number="qty"
+                    min="1"
+                  />
+                  <button
+                    type="button"
+                    class="btn btn-primary"
+                    @click="$emit('add-to-cart', product.id, qty)"
+                  >
                     加入購物車
                   </button>
                 </div>
