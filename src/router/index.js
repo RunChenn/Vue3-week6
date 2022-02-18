@@ -1,25 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
 const routes = [
-  // {
-  //   path: '/demo',
-  //   name: 'demo',
-  //   component: () => import('../views/demo.vue'),
-  // },
   {
     path: '/',
-    name: 'Login',
-    component: () => import('../pages/login.vue'),
+    name: 'Index',
+    component: () => import('../pages/index.vue'),
     meta: {
-      layout: 'Login',
-    },
-  },
-  {
-    path: '/products',
-    name: 'Products',
-    component: () => import('../pages/products.vue'),
-    meta: {
-      layout: 'Products',
+      layout: 'index',
     },
   },
 ];

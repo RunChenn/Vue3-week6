@@ -21,7 +21,9 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const qty = ref(0);
+    const qty = ref(1);
+
+    console.log(props.product);
     return {
       qty,
     };

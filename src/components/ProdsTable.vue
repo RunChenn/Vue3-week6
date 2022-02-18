@@ -3,44 +3,21 @@ import { ref, reactive, onMounted } from 'vue';
 import api from '../api/index.js';
 
 import ProdModal from '../components/ProdModal.vue';
-// import Pagination from '../components/Pagination.vue';
 
 export default {
-  // components: { ProdModal, DelModal, Pagination },
   components: { ProdModal },
+  props: {
+    products: {
+      type: Array,
+      default: () => [],
+    },
+  },
   setup() {
-    let products = ref([]);
     let product = ref({});
-
-    let prodInfo = ref({});
-
-    let isNew = ref(false);
-
-    let tempProduct = ref({ imagesUrl: [], id: '' });
 
     const loadingStatus = reactive({
       loadingItem: '',
     });
-
-    // let pagination = ref({});
-
-    const prodsDetail = (item) => {
-      prodInfo.value = item;
-    };
-
-    // 載入所有商品
-    const getProducts = async () => {
-      try {
-        const prodsData = await api.products.getProductsAll();
-
-        products.value = prodsData.products;
-
-        console.log(products.value);
-        // pagination.value = prodsData.pagination;
-      } catch (err) {
-        alert(err.message);
-      }
-    };
 
     // 載入單一商品
     const getProduct = async (id) => {
@@ -52,46 +29,43 @@ export default {
         loadingStatus.loadingItem = '';
 
         product.value = prodsData.product;
-
-        console.log(product.value);
-        // pagination.value = prodsData.pagination;
       } catch (err) {
         alert(err.message);
       }
     };
 
-    onMounted(async () => {
+    // 加入購物車
+    const addToCart = async (id, qty = 1) => {
       try {
-        // 檢查權限
-        await api.auth.checkAuth();
-        getProducts();
+        loadingStatus.loadingItem = id;
+
+        const cart = {
+          product_id: id,
+          qty,
+        };
+
+        const res = await api.cart.addCart({ data: cart });
+        console.log(res);
+
+        alert(res.message);
+
+        console.log(product.value);
+        loadingStatus.loadingItem = '';
+        getCart();
       } catch (err) {
         alert(err.message);
       }
-    });
+    };
 
     const openModal = (id) => {
       getProduct(id);
     };
 
-    // 新增圖片
-    const createImages = () => {
-      tempProduct.value.imagesUrl = [];
-      tempProduct.value.imagesUrl.push('');
-    };
-
     return {
-      products,
       product,
       loadingStatus,
-
-      prodsDetail,
-      prodInfo,
-      tempProduct,
-      isNew,
+      addToCart,
       openModal,
-      createImages,
-      getProducts,
     };
   },
 };
@@ -195,12 +169,10 @@ export default {
             </tr>
           </tbody>
         </table>
-
-        <!-- <Pagination v-model:pages="pagination" @update-pages="getProducts" /> -->
       </div>
     </div>
     <!-- Modal -->
-    <ProdModal v-model:product="product" @update="getProducts" />
+    <ProdModal v-model:product="product" @add-to-cart="addToCart" />
   </div>
 </template>
 
