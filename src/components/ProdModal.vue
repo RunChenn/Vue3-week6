@@ -19,6 +19,15 @@ export default {
         },
       }),
     },
+    loadingStatus: {
+      type: Object,
+      default: () => ({
+        loadingItem: {
+          type: String,
+          default: '',
+        },
+      }),
+    },
   },
   setup(props, { emit }) {
     const qty = ref(1);

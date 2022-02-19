@@ -21,27 +21,7 @@ export default {
     },
   },
   setup(props, { emit }) {
-    // const cart = ref({});
-
-    console.log(props.cart);
-
-    const removeCartItem = (id) => {
-      emit('removeCartItem', id);
-    };
-
-    const removeCartAll = () => {
-      emit('removeCartAll');
-    };
-
-    const updateCart = () => {
-      emit('removeCartAll');
-    };
-
-    return {
-      removeCartItem,
-      removeCartAll,
-      updateCart,
-    };
+    return {};
   },
 };
 </script>
@@ -54,7 +34,7 @@ export default {
       <button
         class="btn btn-outline-danger"
         type="button"
-        @click="removeCartAll"
+        @click="$emit('remove-cart-all')"
       >
         清空購物車
       </button>
@@ -75,7 +55,7 @@ export default {
               <button
                 type="button"
                 class="btn btn-outline-danger btn-sm"
-                @click="removeCartItem(item.id)"
+                @click="$emit('remove-cart-item', item.id)"
                 :disabled="loadingStatus.loadingItem === item.id"
               >
                 <i
@@ -94,7 +74,7 @@ export default {
                 <div class="input-group mb-3">
                   <input
                     v-model.number="item.qty"
-                    @blur="updateCart(item)"
+                    @blur="$emit('update-cart', item)"
                     :disabled="loadingStatus.loadingItem === item.id"
                     min="1"
                     type="number"

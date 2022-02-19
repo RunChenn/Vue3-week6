@@ -1,70 +1,35 @@
 <script>
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted, watch } from 'vue';
 import api from '../api/index.js';
 
-import ProdModal from '../components/ProdModal.vue';
-
 export default {
-  components: { ProdModal },
   props: {
     products: {
       type: Array,
       default: () => [],
     },
+    loadingStatus: {
+      type: Object,
+      default: () => ({
+        loadingItem: {
+          type: String,
+          default: '',
+        },
+      }),
+    },
   },
-  setup() {
-    let product = ref({});
-
-    const loadingStatus = reactive({
-      loadingItem: '',
+  setup(props, { emit }) {
+    console.log(props.loadingStatus);
+    watch(props.loadingStatus, (val) => {
+      console.log(props.products);
+      console.log(val);
     });
 
-    // 載入單一商品
-    const getProduct = async (id) => {
-      loadingStatus.loadingItem = id;
-
-      try {
-        const prodsData = await api.products.getProduct(id);
-
-        loadingStatus.loadingItem = '';
-
-        product.value = prodsData.product;
-      } catch (err) {
-        alert(err.message);
-      }
-    };
-
-    // 加入購物車
-    const addToCart = async (id, qty = 1) => {
-      try {
-        loadingStatus.loadingItem = id;
-
-        const cart = {
-          product_id: id,
-          qty,
-        };
-
-        const res = await api.cart.addCart({ data: cart });
-        console.log(res);
-
-        alert(res.message);
-
-        console.log(product.value);
-        loadingStatus.loadingItem = '';
-        getCart();
-      } catch (err) {
-        alert(err.message);
-      }
-    };
-
     const openModal = (id) => {
-      getProduct(id);
+      emit('getProduct', id);
     };
 
     return {
-      product,
-      loadingStatus,
-      addToCart,
       openModal,
     };
   },
@@ -91,18 +56,14 @@ export default {
         <table class="table table-hover">
           <thead>
             <tr>
-              <!-- <th scope="col">分類</th> -->
               <th>圖片</th>
               <th scope="col" class="text-start">產品名稱</th>
               <th scope="col">價格</th>
-              <!-- <th scope="col">售價</th> -->
-              <!-- <th scope="col">是否啟用</th> -->
               <th scope="col">操作</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="item in products" :key="item.id">
-              <!-- <td>{{ item.category }}</td> -->
               <td style="width: 200px">
                 <div
                   style="
@@ -114,8 +75,6 @@ export default {
                 ></div>
               </td>
               <td class="text-start">{{ item.title }}</td>
-              <!-- <td>{{ item.origin_price }}</td> -->
-              <!-- <td>{{ item.price }}</td> -->
               <td>
                 <div class="h5" v-if="!item.price">
                   {{ item.origin_price }} 元
@@ -127,11 +86,6 @@ export default {
                   現在只要 {{ item.price }} 元
                 </div>
               </td>
-
-              <!-- <td>
-                  <span v-if="item.is_enabled" class="text-success">啟用</span>
-                  <span v-else>未啟用</span>
-                </td> -->
               <td>
                 <button
                   type="button"
@@ -139,9 +93,7 @@ export default {
                   data-bs-target="#productModal"
                   data-bs-toggle="modal"
                   @click="openModal(item.id)"
-                  :disabled="
-                    loadingStatus.loadingItem === item.id || !item.is_enabled
-                  "
+                  :disabled="loadingStatus.loadingItem === item.id"
                 >
                   <i
                     class="fas fa-spinner fa-pulse"
@@ -154,10 +106,8 @@ export default {
                   class="btn btn-outline-danger btn-sm me-2 mb-md-1"
                   data-bs-target="#delProductModal"
                   data-bs-toggle="modal"
-                  @click="addToCart(item.id)"
-                  :disabled="
-                    loadingStatus.loadingItem === item.id || !item.is_enabled
-                  "
+                  @click="$emit('add-to-cart', item.id)"
+                  :disabled="loadingStatus.loadingItem === item.id"
                 >
                   <i
                     class="fas fa-spinner fa-pulse"
@@ -171,8 +121,6 @@ export default {
         </table>
       </div>
     </div>
-    <!-- Modal -->
-    <ProdModal v-model:product="product" @add-to-cart="addToCart" />
   </div>
 </template>
 

@@ -2,7 +2,7 @@
 import { ref, reactive, onMounted } from 'vue';
 import api from '../api/index.js';
 
-// import Pagination from '../components/Pagination.vue';
+import { Modal } from 'bootstrap';
 
 import ProdsTable from '../components/ProdsTable.vue';
 import Carts from '../components/Carts.vue';
@@ -10,13 +10,25 @@ import Form from '../components/Form.vue';
 import ProdModal from '../components/ProdModal.vue';
 
 export default {
-  components: { ProdModal, ProdsTable, Carts, Form, ProdModal },
+  components: { ProdModal, ProdsTable, Carts, Form },
   setup() {
     const products = ref([]);
+    let product = ref({});
+
     const cart = ref({});
+
+    let productModal = ref(null);
 
     const loadingStatus = reactive({
       loadingItem: '',
+    });
+
+    onMounted(async () => {
+      productModal.value = new Modal(document.getElementById('productModal'), {
+        keyboard: false,
+      });
+      getProducts();
+      getCart();
     });
 
     // 載入所有商品
@@ -32,6 +44,21 @@ export default {
       }
     };
 
+    // 載入單一商品
+    const getProduct = async (id) => {
+      loadingStatus.loadingItem = id;
+
+      try {
+        const prodsData = await api.products.getProduct(id);
+
+        loadingStatus.loadingItem = '';
+
+        product.value = prodsData.product;
+      } catch (err) {
+        alert(err.message);
+      }
+    };
+
     // 取得 購物車商品
     const getCart = async () => {
       try {
@@ -41,6 +68,32 @@ export default {
 
         cart.value = res.data;
         console.log(cart.value);
+      } catch (err) {
+        alert(err.message);
+      }
+    };
+
+    // 加入購物車
+    const addToCart = async (id, qty = 1) => {
+      console.log(id);
+      console.log(qty);
+      // const { id, qty } = data;
+      productModal.value.hide();
+      try {
+        loadingStatus.loadingItem = id;
+
+        const cart = {
+          product_id: id,
+          qty,
+        };
+
+        const res = await api.cart.addCart({ data: cart });
+
+        alert(res.message);
+
+        loadingStatus.loadingItem = '';
+
+        getCart();
       } catch (err) {
         alert(err.message);
       }
@@ -95,15 +148,27 @@ export default {
       }
     };
 
-    onMounted(() => {
-      getProducts();
-      getCart();
-    });
+    const createOrder = (order) => {
+      try {
+        const res = await api.order.addOrder({ data: order });
+
+        alert(res.message);
+        this.$refs.form.resetForm();
+        getCart();
+      } catch (err) {
+        loadingStatus.loadingItem = '';
+        alert(err.message);
+      }
+    };
 
     return {
       products,
+      product,
       cart,
       loadingStatus,
+      getProduct,
+      getCart,
+      addToCart,
       removeCartItem,
       removeCartAll,
       updateCart,
@@ -116,7 +181,13 @@ export default {
   <div class="container">
     <div class="mt-4">
       <!-- 產品列表 -->
-      <ProdsTable v-model:products="products" />
+      <ProdsTable
+        v-model:products="products"
+        v-model:loadingStatus="loadingStatus"
+        @get-product="getProduct"
+        @get-cart="getCart"
+        @add-to-cart="addToCart"
+      />
 
       <!-- 購物車列表 -->
       <Carts
@@ -129,10 +200,14 @@ export default {
     </div>
     <div class="my-5 row justify-content-center">
       <!-- 表單 -->
-      <!-- <Form /> -->
+      <Form @create-order="createOrder" />
     </div>
     <!-- Modal -->
-    <!-- <ProdModal /> -->
+    <ProdModal
+      v-model:product="product"
+      @add-to-cart="addToCart"
+      v-model:loadingStatus="loadingStatus"
+    />
   </div>
 </template>
 
