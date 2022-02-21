@@ -1,14 +1,32 @@
 <script>
 import { reactive } from 'vue';
-import api from '../api/index.js';
+// import { useField } from 'vee-validate';
+// import { required, email, min, max } from '@vee-validate/rules';
+// import { localize } from '@vee-validate/i18n';
+
+// import * as rules from "@vee-validate/rules";
+// Object.keys(rules).forEach((rule) => {
+//   defineRule(rule, rules[rule]);
+// });
+
+// configure({
+//   generateMessage: localize('zh_TW'),
+// });
+
+// defineRule('required', required);
+// defineRule('email', email);
+// defineRule('min', min);
+// defineRule('max', max);
 
 export default {
+  name: 'Form',
   props: {
     // id: {
     //   type: String,
     //   default: '',
     // },
   },
+  emits: ['createOrder'],
   setup(props, { emit }) {
     const form = reactive({
       user: {
@@ -20,32 +38,50 @@ export default {
       message: '',
     });
 
+    // function validate(value) {
+    //   if (!value) {
+    //     return 'This field is required';
+    //   }
+
+    //   if (value.length < 3) {
+    //     return 'Must contain more than 3 characters';
+    //   }
+
+    //   return true;
+    // }
+
+    // // const { value, errorMessage } = useField("fieldName", validate);
+    // const { value: email, errorMessage } = useField('email', 'required|email');
+
+    const createOrder = async () => {
+      emit('createOrder', form);
+    };
+
     return {
       form,
+      // email,
+      // errorMessage,
+      createOrder,
     };
   },
 };
 </script>
 
 <template>
-  <v-form
-    ref="form"
-    class="col-md-6"
-    v-slot="{ errors }"
-    @submit="$emit('create-order', form)"
-  >
+  <VForm ref="form" class="col-md-6" v-slot="{ errors }" @submit="createOrder">
     <div class="mb-3">
       <label for="email" class="form-label">Email</label>
-      <v-field
+      <VField
         id="email"
         name="email"
         type="email"
         class="form-control"
         :class="{ 'is-invalid': errors['email'] }"
         placeholder="請輸入 Email"
+        rules="required"
         v-model="form.user.email"
-      ></v-field>
-      <error-message name="email" class="invalid-feedback"></error-message>
+      ></VField>
+      <ErrorMessage name="email" class="invalid-feedback"></ErrorMessage>
     </div>
 
     <div class="mb-3">
@@ -105,7 +141,7 @@ export default {
     <div class="text-end">
       <button type="submit" class="btn btn-danger">送出訂單</button>
     </div>
-  </v-form>
+  </VForm>
 </template>
 
 <style lang="scss" scoped></style>

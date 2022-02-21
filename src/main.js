@@ -9,11 +9,14 @@ import './scss/custom.scss';
 
 import 'jquery';
 import 'bootstrap';
-// import 'bootstrap/dist/css/bootstrap.min.css';
+
+import veeValidate from './plugins/vee-validate';
 
 const app = createApp(App);
 
 // app.config.globalProperties.$axios = axios;
+
+app.use(veeValidate);
 
 app.use(router);
 

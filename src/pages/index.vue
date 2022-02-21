@@ -148,12 +148,12 @@ export default {
       }
     };
 
-    const createOrder = (order) => {
+    const createOrder = async (order) => {
       try {
         const res = await api.order.addOrder({ data: order });
 
         alert(res.message);
-        this.$refs.form.resetForm();
+        order.resetForm();
         getCart();
       } catch (err) {
         loadingStatus.loadingItem = '';
@@ -172,6 +172,7 @@ export default {
       removeCartItem,
       removeCartAll,
       updateCart,
+      createOrder,
     };
   },
 };
