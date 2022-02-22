@@ -16,10 +16,11 @@
     "popper.js": "^1.16.1",
     "vee-validate": "^4.5.8",
     "vue": "^3.2.25",
-    "vue-router": "^4.0.12"
+    "vue-router": "^4.0.12",
+    "yup": "^0.32.11"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^2.0.0",
+    "@vitejs/plugin-vue": "^2.2.2",
     "node-sass": "^7.0.1",
     "sass": "^1.49.0",
     "sass-loader": "^12.4.0",

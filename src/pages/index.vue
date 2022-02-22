@@ -1,5 +1,5 @@
 <script>
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted, toRefs } from 'vue';
 import api from '../api/index.js';
 
 import { Modal } from 'bootstrap';
@@ -18,10 +18,21 @@ export default {
     const cart = ref({});
 
     let productModal = ref(null);
+    let isResetForm = ref(false);
 
     const loadingStatus = reactive({
       loadingItem: '',
     });
+
+    // const form = reactive({
+    //   user: {
+    //     name: '',
+    //     email: '',
+    //     tel: '',
+    //     address: '',
+    //   },
+    //   message: '',
+    // });
 
     onMounted(async () => {
       productModal.value = new Modal(document.getElementById('productModal'), {
@@ -153,7 +164,8 @@ export default {
         const res = await api.order.addOrder({ data: order });
 
         alert(res.message);
-        order.resetForm();
+        // orderForm.resetForm();
+        isResetForm.value = true;
         getCart();
       } catch (err) {
         loadingStatus.loadingItem = '';
@@ -162,6 +174,7 @@ export default {
     };
 
     return {
+      // ...toRefs(form),
       products,
       product,
       cart,
@@ -173,6 +186,7 @@ export default {
       removeCartAll,
       updateCart,
       createOrder,
+      isResetForm,
     };
   },
 };
@@ -201,7 +215,11 @@ export default {
     </div>
     <div class="my-5 row justify-content-center">
       <!-- 表單 -->
-      <Form @create-order="createOrder" />
+      <Form
+        @create-order="createOrder"
+        v-model:is-reset-form="isResetForm"
+        v-model:cart="cart"
+      />
     </div>
     <!-- Modal -->
     <ProdModal
