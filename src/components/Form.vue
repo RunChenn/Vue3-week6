@@ -1,42 +1,12 @@
 <script>
-import { ref, reactive, toRefs, watch } from 'vue';
-import {
-  useField,
-  defineRule,
-  configure,
-  useForm,
-  Form,
-  Field,
-  ErrorMessage,
-  useResetForm,
-} from 'vee-validate';
-import { required, email, min, max } from '@vee-validate/rules';
-import { localize, loadLocaleFromURL } from '@vee-validate/i18n';
+import { ref } from 'vue';
+import { useField, useForm, ErrorMessage } from 'vee-validate';
 
 import * as yup from 'yup';
-
-// import * as rules from "@vee-validate/rules";
-// Object.keys(rules).forEach((rule) => {
-//   defineRule(rule, rules[rule]);
-// });
-loadLocaleFromURL(
-  'https://unpkg.com/@vee-validate/i18n@4.1.0/dist/locale/zh_TW.json'
-);
-
-configure({
-  generateMessage: localize('zh_TW'),
-});
-
-defineRule('required', required);
-defineRule('email', email);
-defineRule('min', min);
-defineRule('max', max);
 
 export default {
   name: 'Form',
   components: {
-    // VForm: Form,
-    // VField: Field,
     ErrorMessage: ErrorMessage,
   },
   props: {
@@ -44,44 +14,23 @@ export default {
       type: Object,
       default: () => ({}),
     },
-    isResetForm: {
-      type: Boolean,
-      default: false,
-    },
-    //   form: {
-    //     type: Object,
-    //     default: () => ({
-    //       user: {
-    //         type: Object,
-    //         default: () => ({
-    //           name: '',
-    //           email: '',
-    //           tel: '',
-    //           address: '',
-    //         }),
-    //       },
-    //     }),
-    //   },
   },
   emits: ['createOrder'],
   setup(props, { emit }) {
-    // const form = ref(null);
-
-    // let data = reactive({
-    //   user: {
-    //     name: '',
-    //     email: '',
-    //     tel: '',
-    //     address: '',
-    //   },
-    //   message: '',
-    // });
-
     const validObj = yup.object({
-      name: yup.string().nullable().required(),
-      email: yup.string().nullable().required().email(),
-      tel: yup.string().nullable().required().min(8).max(10),
-      address: yup.string().nullable().required(),
+      name: yup.string().nullable().required('必填'),
+      email: yup
+        .string()
+        .nullable()
+        .required('必填')
+        .email('請輸入正確的email'),
+      tel: yup
+        .string()
+        .nullable()
+        .required('必填')
+        .min(8, '不能小於 8 個字元')
+        .max(10, '不能大於 10 個字元'),
+      address: yup.string().nullable().required('必填'),
     });
 
     const { errors, handleSubmit } = useForm({
@@ -95,11 +44,7 @@ export default {
     const message = ref('');
 
     const createOrder = handleSubmit((values, { resetForm }) => {
-      console.log(props.cart);
-
       if (props.cart.carts.length === 0) return alert('購物車內無資料');
-
-      console.log(values);
 
       const data = {
         user: values,
@@ -110,15 +55,8 @@ export default {
 
       resetForm();
     });
-    // };
 
     return {
-      // ...toRefs(data),
-      // form,
-      // email,
-      // errorMessage,
-      // emailField,
-      // nameField,
       email,
       name,
       tel,
@@ -144,14 +82,7 @@ export default {
         rules="required|email"
         v-model="email"
       />
-      <div>
-        {{ errors.email }}
-      </div>
-      <!-- <div class="invalid-feedback">
-        {{ errors.email }}
-      </div> -->
-      <!-- :class="{ 'is-invalid': errors['email'] }" -->
-      <!-- <ErrorMessage name="email" class="invalid-feedback"></ErrorMessage> -->
+      <div class="text-danger">{{ errors.email }}</div>
     </div>
 
     <div class="mb-3">
@@ -165,11 +96,7 @@ export default {
         rules="required"
         v-model="name"
       />
-      <!-- :class="{ 'is-invalid': errors['姓名'] }" -->
-      <div>
-        {{ errors.name }}
-      </div>
-      <!-- <error-message name="姓名" class="invalid-feedback"></error-message> -->
+      <div class="text-danger">{{ errors.name }}</div>
     </div>
 
     <div class="mb-3">
@@ -183,10 +110,7 @@ export default {
         rules="required|min:8|max:10"
         v-model="tel"
       />
-      <!-- :class="{ 'is-invalid': errors['電話'] }" -->
-      <div>
-        {{ errors.tel }}
-      </div>
+      <div class="text-danger">{{ errors.tel }}</div>
 
       <error-message name="電話" class="invalid-feedback"></error-message>
     </div>
@@ -202,11 +126,7 @@ export default {
         rules="required"
         v-model="address"
       />
-      <!-- :class="{ 'is-invalid': errors['地址'] }" -->
-      <div>
-        {{ errors.address }}
-      </div>
-      <!-- <error-message name="地址" class="invalid-feedback"></error-message> -->
+      <div class="text-danger">{{ errors.address }}</div>
     </div>
 
     <div class="mb-3">

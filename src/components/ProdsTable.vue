@@ -1,7 +1,4 @@
 <script>
-import { ref, reactive, onMounted, watch } from 'vue';
-import api from '../api/index.js';
-
 export default {
   props: {
     products: {
@@ -19,12 +16,6 @@ export default {
     },
   },
   setup(props, { emit }) {
-    console.log(props.loadingStatus);
-    watch(props.loadingStatus, (val) => {
-      console.log(props.products);
-      console.log(val);
-    });
-
     const openModal = (id) => {
       emit('getProduct', id);
     };
@@ -39,17 +30,6 @@ export default {
 <template>
   <div class="prodsTable">
     <div class="row">
-      <!-- <div class="text-end mb-1"> -->
-      <!-- <button
-            type="button"
-            class="btn btn-success"
-            @click="openModal('new')"
-            data-bs-toggle="modal"
-            data-bs-target="#productModal"
-          >
-            建立新的產品
-          </button> -->
-      <!-- </div> -->
       <div class="col-12 col-sm-12">
         <h5>產品列表</h5>
         <hr />
@@ -95,10 +75,10 @@ export default {
                   @click="openModal(item.id)"
                   :disabled="loadingStatus.loadingItem === item.id"
                 >
-                  <i
-                    class="fas fa-spinner fa-pulse"
+                  <span
+                    class="spinner-border spinner-border-sm"
                     v-if="loadingStatus.loadingItem === item.id"
-                  ></i>
+                  ></span>
                   查看更多
                 </button>
                 <button
@@ -109,10 +89,10 @@ export default {
                   @click="$emit('add-to-cart', item.id)"
                   :disabled="loadingStatus.loadingItem === item.id"
                 >
-                  <i
-                    class="fas fa-spinner fa-pulse"
+                  <span
+                    class="spinner-border spinner-border-sm"
                     v-if="loadingStatus.loadingItem === item.id"
-                  ></i>
+                  ></span>
                   加到購物車
                 </button>
               </td>

@@ -1,5 +1,5 @@
 <script>
-import { ref, reactive, onMounted, toRefs } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import api from '../api/index.js';
 
 import { Modal } from 'bootstrap';
@@ -9,37 +9,36 @@ import Carts from '../components/Carts.vue';
 import Form from '../components/Form.vue';
 import ProdModal from '../components/ProdModal.vue';
 
+import Loading from 'vue-loading-overlay';
+import 'vue-loading-overlay/dist/vue-loading.css';
+
 export default {
-  components: { ProdModal, ProdsTable, Carts, Form },
+  components: { Loading, ProdModal, ProdsTable, Carts, Form },
   setup() {
+    const isLoading = ref(false);
+    const fullPage = ref(true);
+
     const products = ref([]);
     let product = ref({});
-
     const cart = ref({});
 
     let productModal = ref(null);
-    let isResetForm = ref(false);
 
     const loadingStatus = reactive({
       loadingItem: '',
     });
 
-    // const form = reactive({
-    //   user: {
-    //     name: '',
-    //     email: '',
-    //     tel: '',
-    //     address: '',
-    //   },
-    //   message: '',
-    // });
-
     onMounted(async () => {
+      isLoading.value = true;
+
       productModal.value = new Modal(document.getElementById('productModal'), {
         keyboard: false,
       });
+
       getProducts();
       getCart();
+
+      isLoading.value = false;
     });
 
     // 載入所有商品
@@ -48,8 +47,6 @@ export default {
         const prodsData = await api.products.getProductsAll();
 
         products.value = prodsData.products;
-
-        console.log(products.value);
       } catch (err) {
         alert(err.message);
       }
@@ -75,10 +72,7 @@ export default {
       try {
         const res = await api.cart.getCart();
 
-        console.log(res);
-
         cart.value = res.data;
-        console.log(cart.value);
       } catch (err) {
         alert(err.message);
       }
@@ -86,9 +80,6 @@ export default {
 
     // 加入購物車
     const addToCart = async (id, qty = 1) => {
-      console.log(id);
-      console.log(qty);
-      // const { id, qty } = data;
       productModal.value.hide();
       try {
         loadingStatus.loadingItem = id;
@@ -112,7 +103,6 @@ export default {
 
     // 移除 購物車特定商品
     const removeCartItem = async (id) => {
-      console.log(id);
       try {
         const res = await api.cart.removeCartItem(id);
 
@@ -160,21 +150,26 @@ export default {
     };
 
     const createOrder = async (order) => {
+      isLoading.value = true;
+
       try {
         const res = await api.order.addOrder({ data: order });
 
         alert(res.message);
-        // orderForm.resetForm();
-        isResetForm.value = true;
+
         getCart();
+        isLoading.value = false;
       } catch (err) {
         loadingStatus.loadingItem = '';
+        isLoading.value = false;
         alert(err.message);
       }
     };
 
     return {
       // ...toRefs(form),
+      isLoading,
+      fullPage,
       products,
       product,
       cart,
@@ -186,7 +181,6 @@ export default {
       removeCartAll,
       updateCart,
       createOrder,
-      isResetForm,
     };
   },
 };
@@ -195,6 +189,8 @@ export default {
 <template>
   <div class="container">
     <div class="mt-4">
+      <Loading v-model:active="isLoading" :is-full-page="fullPage" />
+
       <!-- 產品列表 -->
       <ProdsTable
         v-model:products="products"
@@ -215,11 +211,7 @@ export default {
     </div>
     <div class="my-5 row justify-content-center">
       <!-- 表單 -->
-      <Form
-        @create-order="createOrder"
-        v-model:is-reset-form="isResetForm"
-        v-model:cart="cart"
-      />
+      <Form @create-order="createOrder" v-model:cart="cart" />
     </div>
     <!-- Modal -->
     <ProdModal

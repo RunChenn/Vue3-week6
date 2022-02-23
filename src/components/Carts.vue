@@ -1,14 +1,14 @@
 <script>
-import { ref, onMounted } from 'vue';
-import api from '../api/index.js';
-
-// import { Modal } from 'bootstrap';
-
 export default {
   props: {
     cart: {
       type: Object,
-      default: () => ({}),
+      default: () => ({
+        carts: {
+          type: Array,
+          default: () => [],
+        },
+      }),
     },
     loadingStatus: {
       type: Object,
@@ -20,7 +20,7 @@ export default {
       }),
     },
   },
-  setup(props, { emit }) {
+  setup() {
     return {};
   },
 };
@@ -35,6 +35,7 @@ export default {
         class="btn btn-outline-danger"
         type="button"
         @click="$emit('remove-cart-all')"
+        :disabled="cart.carts && cart.carts.length === 0"
       >
         清空購物車
       </button>

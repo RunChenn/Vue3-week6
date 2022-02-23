@@ -7,6 +7,9 @@ import App from './App.vue';
 
 import './scss/custom.scss';
 
+import VueLoading from 'vue-loading-overlay';
+import 'vue-loading-overlay/dist/vue-loading.css';
+
 import 'jquery';
 import 'bootstrap';
 
@@ -16,6 +19,7 @@ const app = createApp(App);
 
 // app.config.globalProperties.$axios = axios;
 
+app.use(VueLoading);
 app.use(veeValidate);
 
 app.use(router);
