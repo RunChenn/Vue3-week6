@@ -67,83 +67,63 @@ export default {
   setup(props, { emit }) {
     // const form = ref(null);
 
-    let data = reactive({
-      user: {
-        name: '',
-        email: '',
-        tel: '',
-        address: '',
-      },
-      message: '',
-    });
+    // let data = reactive({
+    //   user: {
+    //     name: '',
+    //     email: '',
+    //     tel: '',
+    //     address: '',
+    //   },
+    //   message: '',
+    // });
 
-    console.log(useForm());
-
-    // const { handleSubmit } = useForm();
-    const form = useForm();
-
-    const form1Object = yup.object({
+    const validObj = yup.object({
       name: yup.string().nullable().required(),
       email: yup.string().nullable().required().email(),
+      tel: yup.string().nullable().required().min(8).max(10),
+      address: yup.string().nullable().required(),
     });
 
-    // form validation intialize
-    // const { handleSubmit } = useForm({
-    //   validationSchema: form1Object,
-    // });
-
-    const { errors } = useForm({
-      validationSchema: form1Object,
+    const { errors, handleSubmit } = useForm({
+      validationSchema: validObj,
     });
+
     const { value: email } = useField('email');
+    const { value: name } = useField('name');
+    const { value: tel } = useField('tel');
+    const { value: address } = useField('address');
+    const message = ref('');
 
-    // const nameField = reactive(
-    //   useField('name', undefined, { initialValue: null })
-    // );
-    // const emailField = reactive(
-    //   useField('email', undefined, { initialValue: null })
-    // );
-
-    // const { errorMessage, value } = useField('emailField', yup.string().nullable().required().email());
-    // const emailField = useField(
-    //   'emailField',
-    //   yup.string().nullable().required().email()
-    // );
-
-    // const submitForm = handleSubmit(async (values) => {
-    //   console.log(values);
-    // });
-
-    // const createOrder = handleSubmit((values, { resetForm }) => {
-    const createOrder = () => {
-      // emit('createOrder', props.form);
-
+    const createOrder = handleSubmit((values, { resetForm }) => {
       console.log(props.cart);
 
       if (props.cart.carts.length === 0) return alert('購物車內無資料');
 
-      // console.log(values);
+      console.log(values);
+
+      const data = {
+        user: values,
+        message: message,
+      };
 
       emit('createOrder', data);
 
-      // console.log(resetForm);
-
-      form.resetForm();
-
-      // emit('resetForm', form);
-      // console.log(form);
-      // form.resetForm();
-      // });
-    };
+      resetForm();
+    });
+    // };
 
     return {
-      ...toRefs(data),
-      form,
+      // ...toRefs(data),
+      // form,
       // email,
       // errorMessage,
       // emailField,
       // nameField,
       email,
+      name,
+      tel,
+      address,
+      message,
       errors,
       createOrder,
     };
@@ -164,11 +144,14 @@ export default {
         rules="required|email"
         v-model="email"
       />
-      <p>
+      <div>
         {{ errors.email }}
-      </p>
+      </div>
+      <!-- <div class="invalid-feedback">
+        {{ errors.email }}
+      </div> -->
       <!-- :class="{ 'is-invalid': errors['email'] }" -->
-      <ErrorMessage name="email" class="invalid-feedback"></ErrorMessage>
+      <!-- <ErrorMessage name="email" class="invalid-feedback"></ErrorMessage> -->
     </div>
 
     <div class="mb-3">
@@ -180,11 +163,13 @@ export default {
         class="form-control"
         placeholder="請輸入姓名"
         rules="required"
-        v-model="user.name"
+        v-model="name"
       />
       <!-- :class="{ 'is-invalid': errors['姓名'] }" -->
-
-      <error-message name="姓名" class="invalid-feedback"></error-message>
+      <div>
+        {{ errors.name }}
+      </div>
+      <!-- <error-message name="姓名" class="invalid-feedback"></error-message> -->
     </div>
 
     <div class="mb-3">
@@ -196,9 +181,12 @@ export default {
         class="form-control"
         placeholder="請輸入電話"
         rules="required|min:8|max:10"
-        v-model="user.tel"
+        v-model="tel"
       />
       <!-- :class="{ 'is-invalid': errors['電話'] }" -->
+      <div>
+        {{ errors.tel }}
+      </div>
 
       <error-message name="電話" class="invalid-feedback"></error-message>
     </div>
@@ -212,11 +200,13 @@ export default {
         class="form-control"
         placeholder="請輸入地址"
         rules="required"
-        v-model="user.address"
+        v-model="address"
       />
       <!-- :class="{ 'is-invalid': errors['地址'] }" -->
-
-      <error-message name="地址" class="invalid-feedback"></error-message>
+      <div>
+        {{ errors.address }}
+      </div>
+      <!-- <error-message name="地址" class="invalid-feedback"></error-message> -->
     </div>
 
     <div class="mb-3">
