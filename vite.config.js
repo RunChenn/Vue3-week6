@@ -12,7 +12,7 @@ export default defineConfig({
   //     },
   //   },
   // },
-  base: process.env.NODE_ENV === 'production' ? '/Vue3-week5/' : './',
+  base: process.env.NODE_ENV === 'production' ? '/Vue3-week6/' : './',
   server: {
     host: '0.0.0.0',
     //   port: 3000,

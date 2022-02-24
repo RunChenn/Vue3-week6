@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { Cookies } from './cookies.js';
 
 const apiPath = 'aprilchen';
 
@@ -12,6 +13,14 @@ const axiosInstance = axios.create({
 // request interceptor
 axiosInstance.interceptors.request.use(
   (res) => {
+    console.log(Cookies.getCookie());
+    if (Cookies && Cookies.getCookie()) {
+      const token = Cookies.getCookie();
+
+      token && (res.headers.common.Authorization = token);
+
+      // window.location.href = '/#/';
+    }
     return res;
   },
   (err) => {
@@ -33,9 +42,11 @@ axiosInstance.interceptors.response.use(
           break;
         case 401:
           alert(err.response.data.message);
+          window.location.href = '/#/login';
           break;
         case 403:
           alert(err.response.data.message);
+          window.location.href = '/#/login';
           break;
         case 500:
           break;

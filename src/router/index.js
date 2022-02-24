@@ -9,6 +9,22 @@ const routes = [
       layout: 'index',
     },
   },
+  {
+    path: '/',
+    name: 'Login',
+    component: () => import('../pages/login.vue'),
+    meta: {
+      layout: 'Login',
+    },
+  },
+  {
+    path: '/',
+    name: 'Products',
+    component: () => import('../pages/Products.vue'),
+    meta: {
+      layout: 'products',
+    },
+  },
 ];
 
 const router = createRouter({
