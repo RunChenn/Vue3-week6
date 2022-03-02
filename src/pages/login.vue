@@ -6,6 +6,7 @@ import { Cookies, tokenName } from '../utils/cookies.js';
 import { useRouter } from 'vue-router';
 
 export default {
+  name: 'Login',
   setup() {
     const router = useRouter();
     const email = ref('');
@@ -21,7 +22,7 @@ export default {
         const { token, expired } = await api.auth.login(data);
 
         Cookies.setCookie(tokenName, token, expired);
-        router.push({ name: 'Products' });
+        router.push({ name: 'admin-Products' });
       } catch (err) {
         alert(err.message);
       }

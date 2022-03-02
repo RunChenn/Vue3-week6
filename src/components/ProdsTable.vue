@@ -106,8 +106,8 @@ export default {
 
 <style lang="scss" scoped>
 .prodsTable {
-  height: 340px;
-  max-height: 340px;
+  height: calc(100vh - 130px);
+  max-height: calc(100vh - 130px);
   overflow: auto;
   table {
     vertical-align: middle;

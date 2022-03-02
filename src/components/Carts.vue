@@ -63,28 +63,17 @@ export default {
                   class="fas fa-spinner fa-pulse"
                   v-if="loadingStatus.loadingItem === item.id"
                 ></i>
-                x
+                x 移除商品
+                <!-- x -->
               </button>
             </td>
             <td>
               {{ item.product.title }}
               <div class="text-success" v-if="item.coupon">已套用優惠券</div>
             </td>
-            <td>
+            <td class="text-end">
               <div class="input-group input-group-sm">
-                <div class="input-group mb-3">
-                  <input
-                    v-model.number="item.qty"
-                    @blur="$emit('update-cart', item)"
-                    :disabled="loadingStatus.loadingItem === item.id"
-                    min="1"
-                    type="number"
-                    class="form-control"
-                  />
-                  <span class="input-group-text" id="basic-addon2">{{
-                    item.product.unit
-                  }}</span>
-                </div>
+                {{ item.qty }} / {{ item.product.unit }}
               </div>
             </td>
             <td class="text-end">

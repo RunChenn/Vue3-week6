@@ -19,7 +19,7 @@ axiosInstance.interceptors.request.use(
 
       token && (res.headers.common.Authorization = token);
 
-      // window.location.href = '/#/';
+      window.location.href = '/#/admin/products';
     }
     return res;
   },

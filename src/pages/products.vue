@@ -37,7 +37,7 @@ export default {
       });
 
       getProducts();
-      getCart();
+      // getCart();
 
       isLoading.value = false;
     });
@@ -69,15 +69,15 @@ export default {
     };
 
     // 取得 購物車商品
-    const getCart = async () => {
-      try {
-        const res = await api.cart.getCart();
+    // const getCart = async () => {
+    //   try {
+    //     const res = await api.cart.getCart();
 
-        cart.value = res.data;
-      } catch (err) {
-        alert(err.message);
-      }
-    };
+    //     cart.value = res.data;
+    //   } catch (err) {
+    //     alert(err.message);
+    //   }
+    // };
 
     // 加入購物車
     const addToCart = async (id, qty = 1) => {
@@ -96,73 +96,8 @@ export default {
 
         loadingStatus.loadingItem = '';
 
-        getCart();
+        // getCart();
       } catch (err) {
-        alert(err.message);
-      }
-    };
-
-    // 移除 購物車特定商品
-    const removeCartItem = async (id) => {
-      try {
-        const res = await api.cart.removeCartItem(id);
-
-        loadingStatus.loadingItem = id;
-
-        alert(res.message);
-        loadingStatus.loadingItem = '';
-        getCart();
-      } catch (err) {
-        alert(err.message);
-      }
-    };
-
-    // 清空 購物車
-    const removeCartAll = async () => {
-      try {
-        const res = await api.cart.removeCartAll();
-
-        alert(res.message);
-        getCart();
-      } catch (err) {
-        alert(err.message);
-      }
-    };
-
-    // 更新 購物車
-    const updateCart = async (data) => {
-      try {
-        loadingStatus.loadingItem = data.id;
-
-        const cart = {
-          product_id: data.product_id,
-          qty: data.qty,
-        };
-
-        const res = await api.cart.updateCart({ data: cart });
-
-        alert(res.message);
-        loadingStatus.loadingItem = '';
-        getCart();
-      } catch (err) {
-        loadingStatus.loadingItem = '';
-        alert(err.message);
-      }
-    };
-
-    const createOrder = async (order) => {
-      isLoading.value = true;
-
-      try {
-        const res = await api.order.addOrder({ data: order });
-
-        alert(res.message);
-
-        getCart();
-        isLoading.value = false;
-      } catch (err) {
-        loadingStatus.loadingItem = '';
-        isLoading.value = false;
         alert(err.message);
       }
     };
@@ -176,12 +111,8 @@ export default {
       cart,
       loadingStatus,
       getProduct,
-      getCart,
+      // getCart,
       addToCart,
-      removeCartItem,
-      removeCartAll,
-      updateCart,
-      createOrder,
     };
   },
 };
@@ -198,23 +129,11 @@ export default {
         v-model:products="products"
         v-model:loadingStatus="loadingStatus"
         @get-product="getProduct"
-        @get-cart="getCart"
         @add-to-cart="addToCart"
       />
+      <!-- @get-cart="getCart" -->
+    </div>
 
-      <!-- 購物車列表 -->
-      <Carts
-        v-model:cart="cart"
-        v-model:loadingStatus="loadingStatus"
-        @remove-cart-item="removeCartItem"
-        @remove-cart-all="removeCartAll"
-        @update-cart="updateCart"
-      />
-    </div>
-    <div class="my-5 row justify-content-center">
-      <!-- 表單 -->
-      <Form @create-order="createOrder" v-model:cart="cart" />
-    </div>
     <!-- Modal -->
     <ProdModal
       v-model:product="product"
