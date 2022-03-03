@@ -30,6 +30,8 @@ export default {
       try {
         const prodsData = await api.products.getProducts(page);
 
+        console.log(prodsData);
+
         products.value = prodsData.products;
         pagination.value = prodsData.pagination;
       } catch (err) {
@@ -47,35 +49,39 @@ export default {
 </script>
 
 <template>
-  <div>
-    這裡是 後台 產品列表
-    <table class="table mt-4">
-      <thead>
-        <tr>
-          <th width="120">分類</th>
-          <th>產品名稱</th>
-          <th width="120">原價</th>
-          <th width="120">售價</th>
-          <th width="100">是否啟用</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="item in products" :key="item.id">
-          <td>{{ item.category }}</td>
-          <td>{{ item.title }}</td>
-          <td class="text-end">
-            {{ item.origin_price }}
-          </td>
-          <td class="text-end">
-            {{ item.price }}
-          </td>
-          <td>
-            <span v-if="item.is_enabled" class="text-success">啟用</span>
-            <span v-else>未啟用</span>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+  <div class="container">
+    <div class="row py-1">
+      <div class="col-12 col-sm-12">
+        這裡是 後台 產品列表
+        <table class="table table-hover mt-4">
+          <thead>
+            <tr>
+              <th scope="col">分類</th>
+              <th scope="col" class="text-start">產品名稱</th>
+              <th scope="col">原價</th>
+              <th scope="col">售價</th>
+              <th scope="col">是否啟用</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="item in products" :key="item.id">
+              <td>{{ item.category }}</td>
+              <td>{{ item.title }}</td>
+              <td class="text-end">
+                {{ item.origin_price }}
+              </td>
+              <td class="text-end">
+                {{ item.price }}
+              </td>
+              <td>
+                <span v-if="item.is_enabled" class="text-success">啟用</span>
+                <span v-else>未啟用</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
     <!-- <Pagination :pages="pagination" @emit-pages="getProducts"></Pagination> -->
     <Pagination v-model:pages="pagination" @update-pages="getData" />
   </div>

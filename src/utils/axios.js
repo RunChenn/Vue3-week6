@@ -19,7 +19,7 @@ axiosInstance.interceptors.request.use(
 
       token && (res.headers.common.Authorization = token);
 
-      window.location.href = '/#/admin/products';
+      // window.location.href = '/admin/products';
     }
     return res;
   },
@@ -41,12 +41,12 @@ axiosInstance.interceptors.response.use(
         case 400:
           break;
         case 401:
-          alert(err.response.data.message);
-          window.location.href = '/#/login';
+          // alert(err.response.data.message);
+          window.location.href = '/login';
           break;
         case 403:
-          alert(err.response.data.message);
-          window.location.href = '/#/login';
+          // alert(err.response.data.message);
+          window.location.href = '/login';
           break;
         case 500:
           break;

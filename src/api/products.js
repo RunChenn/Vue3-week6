@@ -6,6 +6,10 @@ export default {
     return axiosInstance.get(`/api/${apiPath}/products/all`);
   },
   // 取得 商品資訊
+  getProducts: (page) => {
+    return axiosInstance.get(`/api/${apiPath}/admin/products?page=${page}`);
+  },
+  // 取得 商品資訊
   getProduct: (id) => {
     return axiosInstance.get(`/api/${apiPath}/product/${id}`);
   },
