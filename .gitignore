@@ -5,6 +5,9 @@
 # local env files
 .env.local
 .env.*.local
+.env
+.env.development
+.env.production
 
 
 # "dev": "vite --host"
