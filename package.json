@@ -2,9 +2,9 @@
   "name": "week3",
   "version": "0.0.0",
   "scripts": {
-    "dev": "vite --host",
-    "build": "vite build",
-    "preview": "vite preview"
+    "dev": "cross-env vite --mode development",
+    "build": "cross-env vite build && vite build --mode staging",
+    "preview": "cross-env vite preview"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.3.0",
@@ -25,6 +25,7 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^2.2.2",
+    "cross-env": "^7.0.3",
     "node-sass": "^7.0.1",
     "sass": "^1.49.0",
     "sass-loader": "^12.4.0",

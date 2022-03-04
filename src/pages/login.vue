@@ -19,7 +19,7 @@ export default {
       };
 
       try {
-        const { token, expired } = await api.auth.login(data);
+        const { token, expired } = await api.adminAuth.login(data);
 
         Cookies.setCookie(tokenName, token, expired);
         router.push({ name: 'admin-Products' });

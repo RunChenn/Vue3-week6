@@ -84,8 +84,6 @@ export default {
                 <button
                   type="button"
                   class="btn btn-outline-danger btn-sm me-2 mb-md-1"
-                  data-bs-target="#delProductModal"
-                  data-bs-toggle="modal"
                   @click="$emit('add-to-cart', item.id)"
                   :disabled="loadingStatus.loadingItem === item.id"
                 >

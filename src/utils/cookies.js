@@ -30,10 +30,15 @@ const Cookies = {
   },
 
   clearCookie(cname) {
+    console.log(cname);
+
+    // document.cookie = `${cname}=;expires=;`;
+
     let d = new Date();
     d.setTime(-1);
-    let expires = 'expires=' + d.toUTCString();
-    document.cookie = cname + "=''; " + expires;
+    let expires = d.toUTCString();
+    // document.cookie = `${cname}=;expires=${expires};`;
+    document.cookie = `${cname}=;expires=;`;
   },
 };
 export { Cookies, tokenName };

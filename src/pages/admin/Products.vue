@@ -11,9 +11,9 @@ export default {
   name: 'admin-Products',
   props: ['token'],
   setup() {
-    let products = ref([]);
+    const products = ref([]);
 
-    let pagination = ref({});
+    const pagination = ref({});
 
     onMounted(async () => {
       try {
@@ -21,6 +21,7 @@ export default {
         await api.auth.checkAuth();
         getData();
       } catch (err) {
+        console.log(err);
         alert(err.message);
       }
     });
@@ -28,9 +29,7 @@ export default {
     // 載入所有商品
     const getData = async (page = 1) => {
       try {
-        const prodsData = await api.products.getProducts(page);
-
-        console.log(prodsData);
+        const prodsData = await api.adminProducts.getProducts(page);
 
         products.value = prodsData.products;
         pagination.value = prodsData.pagination;

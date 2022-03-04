@@ -20,10 +20,10 @@ export default {
     const fullPage = ref(true);
 
     const products = ref([]);
-    let product = ref({});
+    const product = ref({});
     const cart = ref({});
 
-    let productModal = ref(null);
+    const productModal = ref(null);
 
     const loadingStatus = reactive({
       loadingItem: '',

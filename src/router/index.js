@@ -76,23 +76,23 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  console.log(to);
+  // console.log(to);
   // 如果 router 轉跳的頁面需要驗證 requiresAuth: true
-  console.log('to=', to.fullPath, '| from=', from.fullPath);
-  console.log(
-    to.matched.some((record) => {
-      console.log(record.name, record.meta.requiresAuth);
-      return record.meta.requiresAuth;
-    })
-  );
+  // console.log('to=', to.fullPath, '| from=', from.fullPath);
+  // console.log(
+  //   to.matched.some((record) => {
+  //     console.log(record.name, record.meta.requiresAuth);
+  //     return record.meta.requiresAuth;
+  //   })
+  // );
   if (
     to.matched.some((record) => {
-      console.log(record.name, record.meta.requiresAuth);
+      // console.log(record.name, record.meta.requiresAuth);
       return record.meta.requiresAuth;
     })
   ) {
     // 如果沒有 token
-    console.log('token?', Cookies.getCookie());
+    // console.log('token?', Cookies.getCookie());
     if (Cookies.getCookie() === '') {
       // 轉跳到 login page
       next({ name: 'Login' });

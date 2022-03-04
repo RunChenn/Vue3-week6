@@ -1,10 +1,10 @@
 import axios from 'axios';
 import { Cookies } from './cookies.js';
 
-const apiPath = 'aprilchen';
+const apiPath = import.meta.env.VITE_APP_PATH;
 
 const axiosInstance = axios.create({
-  baseURL: 'https://vue3-course-api.hexschool.io/v2',
+  baseURL: import.meta.env.VITE_APP_API,
   withCredentials: true,
   headers: { crossDomain: true, 'Content-Type': 'application/json' },
   timeout: 20000,
@@ -13,7 +13,6 @@ const axiosInstance = axios.create({
 // request interceptor
 axiosInstance.interceptors.request.use(
   (res) => {
-    console.log(Cookies.getCookie());
     if (Cookies && Cookies.getCookie()) {
       const token = Cookies.getCookie();
 

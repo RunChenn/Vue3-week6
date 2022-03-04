@@ -16,10 +16,7 @@ export default {
     },
   },
   setup(props, { emit }) {
-    console.log(props);
-    console.log(props.productTitle);
-
-    let delProductModal = ref(null);
+    const delProductModal = ref(null);
 
     onMounted(async () => {
       delProductModal.value = new Modal(
@@ -33,7 +30,7 @@ export default {
     // 刪除商品
     const delProduct = async () => {
       try {
-        const res = await api.products.delProducts(props.id);
+        const res = await api.adminProducts.delProducts(props.id);
 
         alert(res.message);
 

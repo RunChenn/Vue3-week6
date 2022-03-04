@@ -1,11 +1,14 @@
 <script>
 import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import { Cookies, tokenName } from '../../utils/cookies.js';
 import api from '../../api/index.js';
 
 // 驗證可以寫這邊
 export default {
   name: 'admin',
   setup() {
+    const router = useRouter();
     const checkSuccess = ref(false);
 
     onMounted(async () => {
@@ -14,17 +17,18 @@ export default {
         await api.auth.checkAuth();
 
         checkSuccess.value = true;
-        // getData();
       } catch (err) {
         alert(err.message);
-        // router.push({ name: 'Login' });
       }
     });
 
-    const signout = () => {
-      // document.cookie = 'hexToken=;expires=;';
-      // alert('token 已清除');
-      router.push({ name: 'Login' });
+    const signout = async () => {
+      try {
+        await api.auth.logout();
+        router.push({ name: 'Login' });
+      } catch (err) {
+        alert(err.message);
+      }
     };
 
     return {
