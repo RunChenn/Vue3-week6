@@ -1,0 +1,1 @@
+import{o as r,b as e}from"./vendor.7c20991a.js";import{_ as a}from"./index.ad61d20f.js";const n={name:"admin-Orders",data(){return{}}};function o(t,s,d,c,p,_){return r(),e("div",null,"\u9019\u88E1\u662F \u8A02\u55AE\u5217\u8868")}var m=a(n,[["render",o]]);export{m as default};

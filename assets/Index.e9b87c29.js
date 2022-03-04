@@ -1,0 +1,1 @@
+import{o as s,b as o,p as e}from"./vendor.7c20991a.js";import{_ as t}from"./index.ad61d20f.js";const n={components:{},name:"Index",setup(){return{}}},c={class:"container"},r=e("div",{class:"row justify-content-center"},[e("div",{class:"col"},"\u9996\u9801")],-1),a=[r];function d(_,i,p,f,l,m){return s(),o("div",c,a)}var v=t(n,[["render",d]]);export{v as default};
